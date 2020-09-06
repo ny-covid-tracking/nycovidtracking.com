@@ -2,7 +2,7 @@ name: Update Figures
 
 on:
   schedule:
-    - cron: "*/42 */1 * * *"
+    - cron: "* */24 * * *"
 
 jobs:
   build:
