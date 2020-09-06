@@ -1,13 +1,12 @@
-name: Update Data
+name: Update Figures
 
 on:
   schedule:
-    - cron: "* */1 * * *"
+    - cron: "*/20 */1 * * *"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set Up Python 3.8
@@ -18,3 +17,5 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Update Figures
+        run: python update_figures.py
