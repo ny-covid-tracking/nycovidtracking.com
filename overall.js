@@ -1,0 +1,1 @@
+var overallData = {"total_cases": 440578, "last_week_cases": 5068, "yesterday_cases": 557};

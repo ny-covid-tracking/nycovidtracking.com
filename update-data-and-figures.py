@@ -62,12 +62,14 @@ df_population = pd.DataFrame(population_data)
 df_testing = pd.merge(df_testing, df_population, on="county")
 
 total_cases = df_testing["new_positives"].sum()
+overall_summary = {"total_cases": int(total_cases)}
 
 max_date = df_testing["test_date"].max()
 one_week_date = max_date - timedelta(days=7)
 two_week_date = max_date - timedelta(days=14)
 
 df_avg_new_daily_cases = df_testing[df_testing["test_date"] > one_week_date]
+overall_summary["last_week_cases"] = int(df_avg_new_daily_cases["new_positives"].sum())
 df_avg_new_daily_cases = df_avg_new_daily_cases.groupby("county")["new_positives"].mean().reset_index()
 df_avg_new_daily_cases = df_avg_new_daily_cases.rename(columns={"new_positives": "avg_new_daily_cases"})
 
@@ -76,6 +78,7 @@ df_avg_prior_daily_cases = df_avg_prior_daily_cases.groupby("county")["new_posit
 df_avg_prior_daily_cases = df_avg_prior_daily_cases.rename(columns={"new_positives": "avg_prior_daily_cases"})
 
 df_county_stats = df_testing[df_testing["test_date"] == max_date]
+overall_summary["yesterday_cases"] = int(df_county_stats["new_positives"].sum())
 df_county_stats = pd.merge(df_county_stats, df_avg_new_daily_cases, on="county")
 df_county_stats = pd.merge(df_county_stats, df_avg_prior_daily_cases, on="county")
 
@@ -84,6 +87,11 @@ df_county_stats["avg_new_daily_cases_rate_per_100k"] = df_county_stats["avg_new_
 
 df_county_stats["avg_prior_daily_cases_rate"] = df_county_stats["avg_prior_daily_cases"] / df_county_stats["population"]
 df_county_stats["avg_prior_daily_cases_rate_per_100k"] = df_county_stats["avg_prior_daily_cases"] / df_county_stats["population"] * 100000
+
+ranks = df_county_stats.sort_values("avg_new_daily_cases_rate_per_100k", ascending=True)
+best_5 = ranks.head(5)
+ranks = df_county_stats.sort_values("avg_new_daily_cases_rate_per_100k", ascending=False)
+worst_5 = ranks.head(5)
 
 
 print("Joining stats with GeoJSON")
@@ -109,6 +117,21 @@ print("Saving GeoJSON")
 with open("ny-counties-geo.js", "w") as f:
     f.write("var countiesData = ")
     f.write(json.dumps(geojson))
+    f.write(";")
+
+with open("overall.js", "w") as f:
+    f.write("var overallData = ")
+    f.write(json.dumps(overall_summary))
+    f.write(";")
+
+with open("best_5.js", "w") as f:
+    f.write("var best5Data = ")
+    f.write(json.dumps(best_5[["county", "avg_new_daily_cases_rate_per_100k"]].to_dict('records')))
+    f.write(";")
+    
+with open("worst_5.js", "w") as f:
+    f.write("var worst5Data = ")
+    f.write(json.dumps(worst_5[["county", "avg_new_daily_cases_rate_per_100k"]].to_dict('records')))
     f.write(";")
 
 
