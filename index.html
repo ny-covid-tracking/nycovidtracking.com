@@ -23,17 +23,17 @@
             height: 100%;
             margin: 0;
         }
-
-        #map {
-            width: 600px;
-            height: 400px;
-        }
     </style>
 
     <style>
         #map {
-            width: 800px;
-            height: 500px;
+            width: 100%;
+            height: 400px;
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            border: 1px solid black;
+            border-radius: 8px;
         }
 
         .info {
@@ -181,7 +181,8 @@
         }
 
         function zoomToFeature(e) {
-            map.fitBounds(e.target.getBounds());
+            // map.fitBounds(e.target.getBounds());
+            info.update(e.target.feature.properties);
         }
 
         function onEachFeature(feature, layer) {
