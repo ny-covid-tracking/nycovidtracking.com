@@ -1,8 +1,8 @@
-name: Update Figures
+name: Update Data and Figures
 
 on:
   schedule:
-    - cron: "* */24 * * *"
+    - cron: "20 */2 * * *"
 
 jobs:
   build:
@@ -18,11 +18,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Update Figures
-        run: python update_figures.py
+        env:
+          SODAPY_APPTOKEN: ${{secrets.SODAPY_APPTOKEN}}
+        run: python update-data-and-figures.py
       - name: push changes to remote
         run: |
           git config --global user.name "${{secrets.USER_NAME}}"
           git config --global user.email "${{secrets.USER_EMAIL}}"
-          git add index.html
-          git commit -m "update figures"
+          git add ny-counties-geo.js site-last-updated
+          git commit -m "update data and figures"
           git push
