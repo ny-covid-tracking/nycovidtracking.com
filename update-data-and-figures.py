@@ -112,11 +112,6 @@ with open("ny-counties-geo.js", "w") as f:
     f.write(";")
 
 
-print("Removing covid-data.json")
-
-os.remove("covid-data.json")
-
-
 print("Updating site-last-updated")
 
 with open("site-last-updated", "w") as f:
