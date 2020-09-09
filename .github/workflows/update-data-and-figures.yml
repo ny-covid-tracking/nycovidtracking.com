@@ -26,5 +26,4 @@ jobs:
           git config --global user.name "${{secrets.USER_NAME}}"
           git config --global user.email "${{secrets.USER_EMAIL}}"
           git add ny-counties-geo.js site-last-updated
-          git commit -m "update data and figures"
-          git push
+          git diff --quiet && git diff --staged --quiet || (git commit -m "update data and figures"; git push)
